@@ -35,7 +35,7 @@ ADSP_IMAGES := \
     adsp.b00 adsp.b01 adsp.b02 adsp.b03 adsp.b04 adsp.b05 adsp.b06 adsp.b07 \
     adsp.b08 adsp.b09 adsp.b10 adsp.b11 adsp.mdt adpver.cfg
 
-ADSP_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(ADSP_IMAGES)))
+ADSP_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(ADSP_IMAGES)))
 $(ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "ADSP firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -44,10 +44,23 @@ $(ADSP_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(ADSP_SYMLINKS)
 
+KEYMASTER_IMAGES := \
+    keymaste.b00 keymaste.b01 keymaste.b02 keymaste.b03 keymaste.b04 keymaste.b05 \
+    keymaste.b06 keymaste.mdt
+
+KEYMASTER_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(KEYMASTER_IMAGES)))
+$(KEYMASTER_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@echo "Keymaster firmware link: $@"
+	@mkdir -p $(dir $@)
+	@rm -rf $@
+	$(hide) ln -sf /etc/firmware/$(notdir $@) $@
+
+ALL_DEFAULT_INSTALLED_MODULES += $(KEYMASTER_SYMLINKS)
+
 MBA_IMAGES := \
     mba.b00 mba.b01 mba.b02 mba.b03 mba.b04 mba.b05 mba.mbn mba.mdt
 
-MBA_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(MBA_IMAGES)))
+MBA_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(MBA_IMAGES)))
 $(MBA_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "MBA firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -59,7 +72,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(MBA_SYMLINKS)
 MISC_IMAGES := \
     qdsp6m.qdb radiover.cfg version.cfg
 
-MISC_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(MISC_IMAGES)))
+MISC_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(MISC_IMAGES)))
 $(MISC_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Misc firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -74,7 +87,7 @@ MODEM_IMAGES := \
     modem.b12 modem.b13 modem.b15 modem.b16 modem.b17 modem.b18 \
     modem.b19 modem.b20 modem.mdt
 
-MODEM_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(MODEM_IMAGES)))
+MODEM_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(MODEM_IMAGES)))
 $(MODEM_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "Modem firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -88,7 +101,7 @@ SLPI_IMAGES := \
     slpi.b07 slpi.b08 slpi.b09 slpi.b10 slpi.b11 slpi.b12 slpi.b13 \
     slpi.b14 slpi.b15 slpi.mdt slpiver.cfg
 
-SLPI_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(SLPI_IMAGES)))
+SLPI_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(SLPI_IMAGES)))
 $(SLPI_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "SLPI firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -100,7 +113,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(SLPI_SYMLINKS)
 VENUS_IMAGES := \
     venus.b00 venus.b01 venus.b02 venus.b03 venus.b04 venus.mbn venus.mdt
 
-VENUS_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(VENUS_IMAGES)))
+VENUS_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(VENUS_IMAGES)))
 $(VENUS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "VENUS firmware link: $@"
 	@mkdir -p $(dir $@)
@@ -109,46 +122,19 @@ $(VENUS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(VENUS_SYMLINKS)
 
-.PHONY: RFS_LINK_PROCESSING
-RFS_LINK_PROCESSING: $(LOCAL_INSTALLED_MODULE)
-	mkdir -p $(TARGET_OUT)/rfs/apq/gnss/readonly
-	mkdir -p $(TARGET_OUT)/rfs/msm/adsp/readonly
-	mkdir -p $(TARGET_OUT)/rfs/msm/mpss/readonly
-	mkdir -p $(TARGET_OUT)/rfs/mdm/adsp/readonly
-	mkdir -p $(TARGET_OUT)/rfs/mdm/mpss/readonly
-	mkdir -p $(TARGET_OUT)/rfs/mdm/sparrow/readonly
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/apq/gnss/hlos
-	ln -sf /data/tombstones/modem $(TARGET_OUT)/rfs/apq/gnss/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/apq/gnss/readonly/firmware
-	ln -sf /persist/rfs/apq/gnss $(TARGET_OUT)/rfs/apq/gnss/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/apq/gnss/shared
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/mdm/adsp/hlos
-	ln -sf /data/tombstones/lpass $(TARGET_OUT)/rfs/mdm/adsp/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/mdm/adsp/readonly/firmware
-	ln -sf /persist/rfs/mdm/adsp $(TARGET_OUT)/rfs/mdm/adsp/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/mdm/adsp/shared
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/mdm/mpss/hlos
-	ln -sf /data/tombstones/modem $(TARGET_OUT)/rfs/mdm/mpss/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/mdm/mpss/readonly/firmware
-	ln -sf /persist/rfs/mdm/mpss $(TARGET_OUT)/rfs/mdm/mpss/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/mdm/mpss/shared
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/mdm/sparrow/hlos
-	ln -sf /data/tombstones/sparrow $(TARGET_OUT)/rfs/mdm/sparrow/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/mdm/sparrow/readonly/firmware
-	ln -sf /persist/rfs/mdm/sparrow $(TARGET_OUT)/rfs/mdm/sparrow/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/mdm/sparrow/shared
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/msm/adsp/hlos
-	ln -sf /data/tombstones/lpass $(TARGET_OUT)/rfs/msm/adsp/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/msm/adsp/readonly/firmware
-	ln -sf /persist/rfs/msm/adsp $(TARGET_OUT)/rfs/msm/adsp/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/msm/adsp/shared
-	ln -sf /persist/hlos_rfs/shared $(TARGET_OUT)/rfs/msm/mpss/hlos
-	ln -sf /data/tombstones/modem $(TARGET_OUT)/rfs/msm/mpss/ramdumps
-	ln -sf /firmware $(TARGET_OUT)/rfs/msm/mpss/readonly/firmware
-	ln -sf /firmware/wsd $(TARGET_OUT)/rfs/msm/mpss/readonly/wsd
-	ln -sf /persist/rfs/msm/mpss $(TARGET_OUT)/rfs/msm/mpss/readwrite
-	ln -sf /persist/rfs/shared $(TARGET_OUT)/rfs/msm/mpss/shared
+WIDEVINE_IMAGES := \
+    windevine.b00 windevine.b01 windevine.b02 windevine.b03 windevine.b04 \
+    windevine.b05 windevine.b06 windevine.mdt
 
-ALL_DEFAULT_INSTALLED_MODULES += RFS_LINK_PROCESSING
+WIDEVINE_SYMLINKS := $(addprefix $(TARGET_ROOT_OUT)/firmware/image/,$(notdir $(WIDEVINE_IMAGES)))
+$(WIDEVINE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
+	@echo "WIDEVINE firmware link: $@"
+	@mkdir -p $(dir $@)
+	@rm -rf $@
+	$(hide) ln -sf /system/etc/firmware/$(notdir $@) $@
+
+ALL_DEFAULT_INSTALLED_MODULES += $(WIDEVINE_SYMLINKS)
+
+include device/htc/pme/tftp.mk
 
 endif

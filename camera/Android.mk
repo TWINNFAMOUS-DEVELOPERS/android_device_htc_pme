@@ -32,11 +32,13 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-    CameraFace.cpp
+  camera_shim.cpp
 
-LOCAL_MODULE := libcameraface
+LOCAL_SHARED_LIBRARIES := \
+  libui
+
+LOCAL_MODULE := libshim_camera
 LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MULTILIB := 32
 
 include $(BUILD_SHARED_LIBRARY)
-
